@@ -11,6 +11,24 @@ repositories {
   mavenCentral()
 }
 
+ext {
+  javaVersions = [1.6, 1.7, 1.8]
+  javaVersion = System.getProperty("java.specification.version") as BigDecimal
+}
+
+sourceSets.all { ss ->
+  for (jv in javaVersions.findAll { it <= javaVersion } ) {
+    java {
+      srcDir "src/${ss.name}.java$jv/java"
+      println "#### added src/${ss.name}.java$jv/java"
+    }
+    groovy {
+      srcDir "src/${ss.name}.java$jv/groovy"
+      println "#### added src/${ss.name}.java$jv/groovy"
+    }
+  }
+}
+
 assemble << {
     println "\n${'#'*60}\nENVIRONMENT\n${'#'*60}"
     System.env.keySet().sort().each { key -> println "$key = ${System.env[key]}" }
