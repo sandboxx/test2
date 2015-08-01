@@ -61,10 +61,7 @@ if (gradle.startParameter.taskNames == ["travisCiBuild"]) {
     }
     if (javaVersion == javaVersions.max()) {
       if (variant == variants.max()) {
-        gradle.startParameter.taskNames += ["publishJavadoc", "publishDocs"]
-        if (!snapshotVersion) {
-          gradle.startParameter.taskNames += ["tagRelease"]
-        }
+        println "Should generate docs for this combination"
       }
     }
   }
