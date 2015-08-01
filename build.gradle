@@ -12,6 +12,9 @@ repositories {
 }
 
 ext {
+  variants = [2.0, 2.3, 2.4]
+  variant = System.getProperty("variant") as BigDecimal ?: variants.first()
+
   javaVersions = [1.6, 1.7, 1.8]
   javaVersion = System.getProperty("java.specification.version") as BigDecimal
 }
