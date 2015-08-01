@@ -1,0 +1,47 @@
+language: java
+
+sudo: false # run on container-based infrastructure
+
+cache:
+  directories:
+    - $HOME/.gradle
+
+jdk:
+  - openjdk6
+  - openjdk7
+  - oraclejdk8
+
+env:
+  matrix:
+    - VARIANT=2.0
+    - VARIANT=2.3
+    - VARIANT=2.4
+  global:
+    # SIGNING_PASSWORD
+    - secure: "GBvPdDAaGBvPdDAaGBvPdDAaGBvPdDAaGBvPdDAaGBvPdDAaGBvPdDAaGBvPdDAaGBvPdDAaGBvPdDAaGBvPdDAaGBvPdDAaGBvPdDAaGBvPdDAaGBvPdDAaGBvPdDAaGBvPdDAaGBvPdDAaGBvPdDAaGBvPdDAaGBvPdDAaGBv="
+    # SONATYPE_OSS_PASSWORD
+    - secure: "Y2PbI07IY2PbI07IY2PbI07IY2PbI07IY2PbI07IY2PbI07IY2PbI07IY2PbI07IY2PbI07IY2PbI07IY2PbI07IY2PbI07IY2PbI07IY2PbI07IY2PbI07IY2PbI07IY2PbI07IY2PbI07IY2PbI07IY2PbI07IY2PbI07IY2P="
+    # GITHUB_TOKEN
+    - secure: "YhBI9LWkYhBI9LWkYhBI9LWkYhBI9LWkYhBI9LWkYhBI9LWkYhBI9LWkYhBI9LWkYhBI9LWkYhBI9LWkYhBI9LWkYhBI9LWkYhBI9LWkYhBI9LWkYhBI9LWkYhBI9LWkYhBI9LWkYhBI9LWkYhBI9LWkYhBI9LWkYhBI9LWkYhB="
+
+matrix:
+  exclude:
+    # Groovy 2.0 doesn't support Java 8
+    - jdk: oraclejdk8
+      env: VARIANT=2.0
+    # Reduce Travis workload (currently 5 concurrent builds are allowed)
+    # See travisCiBuild task for mandatory combinations
+    - jdk: oraclejdk8
+      env: VARIANT=2.3
+    - jdk: openjdk7
+      env: VARIANT=2.0
+    - jdk: openjdk7
+      env: VARIANT=2.4
+
+install: true
+
+script: ./gradlew travisCiBuild -Dvariant=$VARIANT
+
+notifications:
+  slack:
+    secure: eOht23SFeOht23SFeOht23SFeOht23SFeOht23SFeOht23SFeOht23SFeOht23SFeOht23SFeOht23SFeOht23SFeOht23SFeOht23SFeOht23SFeOht23SFeOht23SFeOht23SFeOht23SFeOht23SFeOht23SFeOht23SFeOh=

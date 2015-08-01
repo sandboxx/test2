@@ -1,0 +1,48 @@
+apply plugin: 'groovy'
+apply plugin: 'java'
+apply plugin: 'eclipse'
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.5'
+}
+
+repositories {
+  jcenter()
+  mavenCentral()
+}
+
+assemble << {
+    println "\n${'#'*60}\nENVIRONMENT\n${'#'*60}"
+    System.env.keySet().sort().each { key -> println "$key = ${System.env[key]}" }
+    println '#'*60
+
+    println "\n\n${'#'*60}\nSYSTEM\n${'#'*60}"
+    System.properties.keySet().sort().each { key -> println "$key = ${System.properties[key]}" }
+    println '#'*60
+}
+
+if (gradle.startParameter.taskNames == ["appveyorCiBuild"]) {
+  gradle.startParameter.taskNames = ["build"]
+}
+
+if (gradle.startParameter.taskNames == ["travisCiBuild"]) {
+  gradle.startParameter.taskNames = ["build"]
+  subprojects {
+    tasks.withType(Test) {
+      maxParallelForks = 2
+    }
+  }
+  if (System.getenv("TRAVIS_PULL_REQUEST") == "false") {
+    if (javaVersion == javaVersions.min()) {
+      gradle.startParameter.taskNames += ["uploadArchives"]
+    }
+    if (javaVersion == javaVersions.max()) {
+      if (variant == variants.max()) {
+        gradle.startParameter.taskNames += ["publishJavadoc", "publishDocs"]
+        if (!snapshotVersion) {
+          gradle.startParameter.taskNames += ["tagRelease"]
+        }
+      }
+    }
+  }
+}
