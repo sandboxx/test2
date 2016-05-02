@@ -42,7 +42,7 @@ install: true
 
 script:
   - cd projects
-  - ./gradlew travisCiBuild -Dvariant=$VARIANT
+  - ./gradlew -info -stacktrace travisCiBuild -Dvariant=$VARIANT 2>&1
 
 notifications:
   slack:
